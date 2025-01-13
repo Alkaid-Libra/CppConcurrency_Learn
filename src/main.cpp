@@ -1,80 +1,90 @@
-// #include <iostream>
-// #include <vector>
-// #include <string>
-// using namespace std;
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <mutex>
+#include "unistd.h"
 
+// std::mutex m;
 
+// std::once_flag flag;
+// int n = 1;
 
-// int main()
-// {
-//     vector<string> msg {"Hello", "C++", "World", "from", "VS Code", "and the C++ extension!"};
-
-//     for (const string& word : msg)
-//     {
-//         cout << word << " ";
-//     }
-//     cout << endl;
-// }
-
-// ---------------------------------------------------------------
-#include "speak.h"
-
-int main(int argc,char *argv[])
-{
-    Speak speak;
-    speak.sayHello("world");
-    return(0);
-}
-
-
-// #include <iostream>
-// #include <vector>
-
-// using namespace std;
-
-// template <typename T>
-// class DemoVector : public vector<T>
-// {
-// private:
-//     class CommaInputWapper
-//     {
-//     public:
-//         CommaInputWapper() = delete;
-//         explicit CommaInputWapper(DemoVector<T>* const sp) : _sp(sp){}
-//         CommaInputWapper& operator, (const T& val)
-//         {
-//             _sp->push_back(val);
-//             return *this;
-//         }
-//     private:
-//         DemoVector<T>* const _sp;
-//     };
-// public:
-//     DemoVector() = default;
-//     CommaInputWapper operator<<(const T& val)
-//     {
-//         vector<T>::clear();
-//         vector<T>::push_back(val);
-//         return CommaInputWapper(this);
+// struct X {
+//     X(int v) {
+//         ::n += v;
+//         std::cout << n << std::endl;
 //     }
 // };
 
-// template <typename T>
-// ostream& operator << (ostream& out, const vector<T>& v)
+
+// void f()
 // {
-//     if (!v.empty())
-//         out << v[0];
-//     for (typename vector<T>::size_type i = 1; i < v.size(); ++i)
-//     {
-//         out << " " << v[i];
-//     }
-//     return out;
+//     // // std::lock_guard<std::mutex> lc{m};
+//     // m.lock();
+//     // std::cout << std::this_thread::get_id() << '\n';
+
+//     // usleep(1000000);
+//     // std::cout << "skipppp" << std::endl;
+//     // m.unlock();
+
+//     // std::call_once(flag, [] {
+//     //     ++n;
+//     //     std::cout << "di " << n << "ci diaoyong\n";
+//     //     // throw std::runtime_error("error");
+//     // });
+
+//     X* p = new X{1};
+//     delete p;
 // }
 
 // int main()
 // {
-//     DemoVector<int> dv1;
-//     dv1 << 1, 2, 3, 4, 5, 6;
-//     cout << dv1 << endl;
-//     return 0;
+//     // std::vector<std::thread> threads;
+//     // for (std::size_t i = 0; i < 10; ++i)
+//     //     threads.emplace_back(f);
+
+//     // for (auto& thread : threads)
+//     //     thread.join();
+    
+//     // // return 0;
+
+
+//     // try
+//     // {
+//         f();
+//     // }
+//     // catch(const std::exception& e)
+//     // {
+//     //     std::cerr << e.what() << '\n';
+//     //     // throw;
+//     // }
+
+//     // try{
+//         // f();
+//     // }
+//     // catch (std::exception& e) {
+//     //     std::cerr << e.what() << '\n';}
+    
+
 // }
+
+
+
+// ----------------------------------------------------------------------
+#include <iostream>
+#include <thread>
+#include <future> // 引入 future 头文件
+
+int task(int n) {
+    std::cout << "异步任务 ID: " << std::this_thread::get_id() << '\n';
+    return n * n;
+}
+
+int main() {
+    std::future<int> future = std::async(task, 10);
+    std::cout << "main: " << std::this_thread::get_id() << '\n';
+    std::cout << std::boolalpha << future.valid() << '\n'; // true
+    std::cout << future.get() << '\n';
+    std::cout << std::boolalpha << future.valid() << '\n'; // false
+}
+
